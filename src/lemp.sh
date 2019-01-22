@@ -53,7 +53,7 @@ fi
 
 read -r -p "Which database do you want to install? [mariadb, mysql, no] [default: $database]: " response
 response=${response,,}
-if [ "$response" != "no" ] && [ "$response" != "n" ]; then
+if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	database=$response
 fi
 
