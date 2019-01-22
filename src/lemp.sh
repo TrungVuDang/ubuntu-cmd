@@ -57,7 +57,7 @@ if [ "$response" != "no" ] && [ "$response" != "n" ]; then
 	database=$response
 fi
 
-if [ "$database" != "no" ] || [ "$database" != "n" ]; then
+if [ "$database" != "no" ] && [ "$database" != "n" ]; then
 	read -r -p "Database password: [$db_password]: " response
 	if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 		db_password=$response
@@ -111,7 +111,7 @@ apt-get -y install expect sed git zip
 echo -e "\n---------------------------------------------------------------------------------------"
 echo "MYSQL"
 
-if [ "$database" != "no" ] || [ "$database" != "n" ]; then
+if [ "$database" != "no" ] && [ "$database" != "n" ]; then
 
 	if [ "$database" == "mysql" ]; then
 		apt-get -y install mysql-server mysql-client
