@@ -11,6 +11,8 @@ fi
 # Config
 total_ram=$(( $(free | awk '/^Mem:/{print $2}') / 1024 ))
 
+public_ip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
+
 # For php
 php_avg_ram=96
 pm_max_child=$(( $total_ram * 3 / 4 / $php_avg_ram )) 
@@ -35,6 +37,8 @@ pma_auth_acc=$ubuntu_user
 pma_auth_pass='1q2w3e4r5t@X'
 pma_folder=$( date +%s | openssl enc -base64 | sed 's/[^a-zA-Z0-9]//g' )
 redis='y'
+certbot='y'
+supervisor='y'
 
 echo -e "\n---------------------------------------------------------------------------------------"
 echo "WHAT SHOULD BE INSTALLED?"
@@ -82,17 +86,31 @@ if [ "$database" != "no" ] && [ "$database" != "n" ]; then
 			pma_auth_pass=$response
 		fi
 
-		read -r -p "What is name of folder for phpmyadmin? (http://10.10.x.x/folder_name/phpmyadmin) [$pma_folder]: " response
+		read -r -p "What is name of folder for phpmyadmin? (http://$public_ip/folder_name/phpmyadmin) [$pma_folder]: " response
 		if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 			pma_folder=$response
 		fi
 	fi	
+else
+	phpmyadmin='n'
 fi
 
 read -r -p "Do you want to install redis database? [y/n] [default $redis] " response
 response=${response,,}
 if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	redis=$response
+fi
+
+read -r -p "Do you want to install certbot? [y/n] [default $certbot] " response
+response=${response,,}
+if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
+	certbot=$response
+fi
+
+read -r -p "Do you want to install supervisor? [y/n] [default $certbot] " response
+response=${response,,}
+if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
+	supervisor=$response
 fi
 
 echo -e "\n---------------------------------------------------------------------------------------"
@@ -311,12 +329,11 @@ $nginx_pma
 }
 EOF
 
-service nginx restart
-
 adduser $ubuntu_user www-data
 chown -R www-data:www-data /var/www
 chmod -R g+rw /var/www
 
+service nginx restart
 
 echo -e "\n---------------------------------------------------------------------------------------"
 echo "COMPOSER"
@@ -337,7 +354,7 @@ if [ $redis == 'y' ]; then
 
 	mkdir /etc/redis
 	cp /tmp/redis-stable/redis.conf /etc/redis
-	sed -i "s/^supervised.*$/supervised = systemd/g" /etc/redis/redis.conf
+	sed -i "s/^supervised.*$/supervised systemd/g" /etc/redis/redis.conf
 	sed -i "s/^dir .*$/dir \/var\/lib\/redis/g" /etc/redis/redis.conf
 	
 	tee /etc/systemd/system/redis.service > /dev/null <<EOF
@@ -361,8 +378,26 @@ EOF
 	chown redis:redis /var/lib/redis
 	chmod 770 /var/lib/redis
 
-	systemctl start redis
-	systemctl status redis
+	systemctl enable redis
+	service redis restart
 fi	
 
 
+echo -e "\n---------------------------------------------------------------------------------------"
+echo "Certbot"
+if [ $redis == 'y' ]; then
+	apt-get install -y software-properties-common
+	add-apt-repository -y universe
+	add-apt-repository -y ppa:certbot/certbot
+	apt-get -y update
+
+	apt-get install python-certbot-nginx 
+fi
+
+
+echo -e "\n---------------------------------------------------------------------------------------"
+echo "Supervisor"
+
+if [ $supervisor == 'y' ]; then
+	apt-get install -y supervisor
+fi
