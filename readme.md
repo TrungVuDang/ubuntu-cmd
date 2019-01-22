@@ -15,7 +15,7 @@ $ sudo ./lemp.sh
 
 or just hit and run 
 ```sh
-$ wget https://raw.githubusercontent.com/TrungVuDang/ubuntu-cmd/v1.1/src/lemp.sh lemp.sh
+$ wget https://raw.githubusercontent.com/TrungVuDang/ubuntu-cmd/master/src/lemp.sh lemp.sh
 $ sudo chmod +x lemp.sh
 $ sudo ./lemp.sh
 ```
