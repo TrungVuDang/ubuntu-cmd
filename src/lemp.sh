@@ -391,7 +391,7 @@ if [ $redis == 'y' ]; then
 	add-apt-repository -y ppa:certbot/certbot
 	apt-get -y update
 
-	apt-get install python-certbot-nginx 
+	apt-get install -y python-certbot-nginx 
 fi
 
 
