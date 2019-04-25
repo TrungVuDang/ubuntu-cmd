@@ -49,7 +49,7 @@ if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	ubuntu_user=$response
 fi
 
-read -r -p "Which PHP version do you want to install? [7.1, 7.2] [default: $phpversion]" response
+read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2] [default: $phpversion]" response
 response=${response,,}
 if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	phpversion=$response
@@ -224,7 +224,7 @@ fi
 
 
 echo -e "\n---------------------------------------------------------------------------------------"
-echo "NGINX & PHP 7.1"
+echo "NGINX & PHP"
 
 add-apt-repository -y ppa:ondrej/php
 apt -y update
@@ -236,8 +236,13 @@ if [ $phpversion = "7.2" ]; then
     apt-get -y install php7.2 php7.2-mysql php7.2-fpm php7.2-mbstring php7.2-xml php7.2-curl php7.2-zip php7.2-gd php7.2-gmp php7.2-intl
     update-alternatives --set php /usr/bin/php7.2
 else
+    if [ $phpversion = "7.1" ]; then
 	apt-get -y install php7.1 php7.1-mysql php7.1-fpm php7.1-mbstring php7.1-xml php7.1-curl php7.1-zip php7.1-gd php7.1-gmp php7.1-intl php7.1-bcmath php7.1-mcrypt
-	update-alternatives --set php /usr/bin/php7.1 
+	update-alternatives --set php /usr/bin/php7.1
+    else
+        apt-get -y install php7.0 php7.0-mysql php7.0-fpm php7.0-mbstring php7.0-xml php7.0-curl php7.0-zip php7.0-gd php7.0-gmp php7.0-intl php7.0-bcmath php7.0-mcrypt
+        update-alternatives --set php /usr/bin/php7.0
+    fi
 fi
  
 
