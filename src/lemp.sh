@@ -15,7 +15,7 @@ public_ip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 
 # For php
 php_avg_ram=96
-pm_max_child=$(( $total_ram * 3 / 4 / $php_avg_ram )) 
+pm_max_child=$(( $total_ram * 3 / 4 / $php_avg_ram ))
 
 pm_min_spare=1
 pm_max_spare=3
@@ -25,7 +25,7 @@ if [ $pm_max_child > 5 ]; then
 	pm_min_spare=$(( $pm_max_child / 5 ))
 	pm_max_spare=$(( $pm_max_child / 2 ))
 	pm_start=$(( $pm_min_spare + ( ( $pm_max_spare - $pm_min_spare ) / 2 ) ))
-fi	
+fi
 
 
 ubuntu_user='ubuntu'
@@ -90,7 +90,7 @@ if [ "$database" != "no" ] && [ "$database" != "n" ]; then
 		if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 			pma_folder=$response
 		fi
-	fi	
+	fi
 else
 	phpmyadmin='n'
 fi
@@ -133,9 +133,9 @@ if [ "$database" != "no" ] && [ "$database" != "n" ]; then
 
 	if [ "$database" == "mysql" ]; then
 		apt-get -y install mysql-server mysql-client
-		
+
 		secure_mysql=$(expect -c "
-set timeout 5		
+set timeout 5
 spawn mysql_secure_installation
 
 expect -exact \"Press y|Y for Yes, any other key for No: \"
@@ -172,7 +172,7 @@ expect eof
 
 		mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$db_password';FLUSH PRIVILEGES;"
 
-		
+
 	else
 		apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
 		add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://ftp.utexas.edu/mariadb/repo/10.3/ubuntu bionic main'
@@ -185,9 +185,9 @@ expect eof
 		apt-get install -y mariadb-server
 
 		apt-get install -y mariadb-client
-		
+
 		secure_mysql=$(expect -c "
-set timeout 5		
+set timeout 5
 spawn mysql_secure_installation
 
 expect -exact \"Enter current password for root (enter for none): \"
@@ -212,7 +212,7 @@ expect eof
 ")
 
 		echo "${secure_mysql}"
-		
+
 	fi
 
 	# Enable remote access
@@ -230,7 +230,7 @@ add-apt-repository -y ppa:ondrej/php
 apt -y update
 
 #nginx
-apt-get -y install nginx 
+apt-get -y install nginx
 
 if [ $phpversion = "7.2" ]; then
     apt-get -y install php7.2 php7.2-mysql php7.2-fpm php7.2-mbstring php7.2-xml php7.2-curl php7.2-zip php7.2-gd php7.2-gmp php7.2-intl
@@ -244,7 +244,7 @@ else
         update-alternatives --set php /usr/bin/php7.0
     fi
 fi
- 
+
 
 sed -i 's/^upload_max_filesize.*$/upload_max_filesize = 32M/g' /etc/php/$phpversion/fpm/php.ini
 sed -i 's/^post_max_size.*$/post_max_size = 36M/g' /etc/php/$phpversion/fpm/php.ini
@@ -290,14 +290,14 @@ EOF
         location /$pma_folder/phpmyadmin {
                 auth_basic "Admin Login";
                 auth_basic_user_file /etc/nginx/auth_pass;
-        }		
+        }
 EOF
 )
-	
+
 	if [ $database == "mariadb" ]; then
 		mysql -u root -p"$db_password" < /usr/share/phpmyadmin/sql/create_tables.sql
 		mysql -u root -p"$db_password" -e "CREATE USER 'phpmyadmin'@'localhost' IDENTIFIED BY '$db_password';GRANT ALL PRIVILEGES ON phpmyadmin.* TO 'phpmyadmin'@'localhost'; FLUSH PRIVILEGES;"
-	fi	
+	fi
 
 fi
 
@@ -342,7 +342,11 @@ service nginx restart
 
 echo -e "\n---------------------------------------------------------------------------------------"
 echo "COMPOSER"
-apt-get -y install composer
+cd ~
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/bin/composer
+sudo chmod +x /usr/bin/composer
+# apt-get -y install composer
 
 
 echo -e "\n---------------------------------------------------------------------------------------"
@@ -361,7 +365,7 @@ if [ $redis == 'y' ]; then
 	cp /tmp/redis-stable/redis.conf /etc/redis
 	sed -i "s/^supervised.*$/supervised systemd/g" /etc/redis/redis.conf
 	sed -i "s/^dir .*$/dir \/var\/lib\/redis/g" /etc/redis/redis.conf
-	
+
 	tee /etc/systemd/system/redis.service > /dev/null <<EOF
 [Unit]
 Description=Redis In-Memory Data Store
@@ -377,7 +381,7 @@ Restart=always
 [Install]
 WantedBy=multi-user.target
 EOF
-	
+
 	adduser --system --group --no-create-home redis
 	mkdir /var/lib/redis
 	chown redis:redis /var/lib/redis
@@ -385,7 +389,7 @@ EOF
 
 	systemctl enable redis
 	service redis restart
-fi	
+fi
 
 
 echo -e "\n---------------------------------------------------------------------------------------"
@@ -396,7 +400,7 @@ if [ $redis == 'y' ]; then
 	add-apt-repository -y ppa:certbot/certbot
 	apt-get -y update
 
-	apt-get install -y python-certbot-nginx 
+	apt-get install -y python-certbot-nginx
 fi
 
 
