@@ -29,7 +29,7 @@ fi
 
 
 ubuntu_user='ubuntu'
-phpversion='7.1'
+phpversion='7.2'
 database='mariadb'
 db_password='1q2w3e4r5t@X'
 phpmyadmin='y'
@@ -233,8 +233,12 @@ apt -y update
 apt-get -y install nginx
 
 if [ $phpversion = "7.2" ]; then
-    apt-get -y install php7.2 php7.2-mysql php7.2-fpm php7.2-mbstring php7.2-xml php7.2-curl php7.2-zip php7.2-gd php7.2-gmp php7.2-intl
+    apt-get -y install php7.2 php7.2-mysql php7.2-fpm php7.2-mbstring php7.2-xml php7.2-curl php7.2-zip php7.2-gd php7.2-gmp php7.2-intl php7.2-bcmath
     update-alternatives --set php /usr/bin/php7.2
+    sudo apt-get -y install gcc make autoconf libc-dev pkg-config
+    sudo apt-get -y install php7.2-dev
+    sudo apt-get -y install libmcrypt-dev
+    sudo pecl install mcrypt-1.0.1
 else
     if [ $phpversion = "7.1" ]; then
 	apt-get -y install php7.1 php7.1-mysql php7.1-fpm php7.1-mbstring php7.1-xml php7.1-curl php7.1-zip php7.1-gd php7.1-gmp php7.1-intl php7.1-bcmath php7.1-mcrypt
