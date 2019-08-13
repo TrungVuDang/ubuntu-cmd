@@ -238,7 +238,7 @@ if [ $phpversion = "7.2" ]; then
     sudo apt-get -y install gcc make autoconf libc-dev pkg-config
     sudo apt-get -y install php7.2-dev
     sudo apt-get -y install libmcrypt-dev
-    sudo pecl install mcrypt-1.0.1
+    sudo pecl install mcrypt-1.0.1 <<<''
 else
     if [ $phpversion = "7.1" ]; then
 	apt-get -y install php7.1 php7.1-mysql php7.1-fpm php7.1-mbstring php7.1-xml php7.1-curl php7.1-zip php7.1-gd php7.1-gmp php7.1-intl php7.1-bcmath php7.1-mcrypt
