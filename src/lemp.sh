@@ -175,7 +175,7 @@ expect eof
 
 	else
 		apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-		add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://ftp.utexas.edu/mariadb/repo/10.3/ubuntu bionic main'
+		add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://archive.mariadb.org/mariadb-10.3.14/repo/ubuntu/ bionic main'
 		apt -y update
 
 		#DEBIAN_FRONTEND=noninteractive apt install -y mariadb-server mariadb-client
