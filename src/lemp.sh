@@ -29,7 +29,7 @@ fi
 
 
 ubuntu_user='ubuntu'
-phpversion='7.3'
+phpversion='7.4'
 database='mariadb'
 db_password='1q2w3e4r5t@X'
 phpmyadmin='y'
@@ -49,7 +49,7 @@ if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	ubuntu_user=$response
 fi
 
-read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2, 7.3] [default: $phpversion]" response
+read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2, 7.3, 7.4] [default: $phpversion]" response
 response=${response,,}
 if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	phpversion=$response
@@ -233,13 +233,12 @@ apt -y update
 apt-get -y install nginx
 
 if [ $phpversion = "7.3" ]; then
-    sudo apt-get -y install nginx php7.3 php7.3-mysql php7.3-fpm php7.3-mbstring php7.3-xml php7.3-curl php7.3-zip  php7.3-gmp php7.3-intl php7.3-cli php7.3-xmlrpc php7.3-gd php7.3-imagick php7.3-recode php7.3-tidy
-    sudo apt-get -y install gcc make autoconf libc-dev pkg-config
+    sudo apt-get -y install nginx php7.3 php7.3-mysql php7.3-fpm php7.3-mbstring php7.3-xml php7.3-curl php7.3-zip  php7.3-gmp php7.3-intl php7.3-cli php7.3-xmlrpc php7.3-gd php7.3-imagick php7.3-recode php7.3-tidy php7.3-imap
     sudo apt-get -y install libmcrypt-dev
     sudo pecl install mcrypt-1.0.2
 else
     if [ $phpversion = "7.2" ]; then
-        apt-get -y install php7.2 php7.2-mysql php7.2-fpm php7.2-mbstring php7.2-xml php7.2-curl php7.2-zip php7.2-gd php7.2-gmp php7.2-intl php7.2-bcmath
+        apt-get -y install nginx php7.2 php7.2-mysql php7.2-fpm php7.2-mbstring php7.2-xml php7.2-curl php7.2-zip php7.2-gd php7.2-gmp php7.2-intl  php7.2-cli php7.2-xmlrpc php7.2-gd php7.2-imagick php7.2-recode php7.2-tidy php7.2-imap
         update-alternatives --set php /usr/bin/php7.2
         sudo apt-get -y install gcc make autoconf libc-dev pkg-config
         sudo apt-get -y install php7.2-dev
@@ -250,8 +249,13 @@ else
     	      apt-get -y install php7.1 php7.1-mysql php7.1-fpm php7.1-mbstring php7.1-xml php7.1-curl php7.1-zip php7.1-gd php7.1-gmp php7.1-intl php7.1-bcmath php7.1-mcrypt
     	      update-alternatives --set php /usr/bin/php7.1
         else
-            apt-get -y install php7.0 php7.0-mysql php7.0-fpm php7.0-mbstring php7.0-xml php7.0-curl php7.0-zip php7.0-gd php7.0-gmp php7.0-intl php7.0-bcmath php7.0-mcrypt
-            update-alternatives --set php /usr/bin/php7.0
+        	if [ $phpversion = "7.4" ]; then
+    	        apt-get -y install nginx php7.4 php7.4-mysql php7.4-fpm php7.4-mbstring php7.4-xml php7.4-curl php7.4-zip php7.4-gd  php7.4-bcmath php7.4-intl php7.4-cli php7.4-xmlrpc  php7.4-imagick php7.4-common php7.4-dev php7.4-imap php7.4-opcache php7.4-soap  unzip php7.4-gmp
+    	      	update-alternatives --set php /usr/bin/php7.4
+	        else
+	            apt-get -y install nginx php7.0 php7.0-mysql php7.0-fpm php7.0-mbstring php7.0-xml php7.0-curl php7.0-mcrypt php7.0-zip php7.0-gd php7.0-bcmath php7.0-gmp
+	            update-alternatives --set php /usr/bin/php7.0
+	        fi
         fi
     fi
 fi
