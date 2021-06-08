@@ -9,6 +9,7 @@ fi
 
 ###################################################################################################
 # Config
+os_code=$(lsb_release -cs)
 total_ram=$(( $(free | awk '/^Mem:/{print $2}') / 1024 ))
 
 public_ip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
@@ -175,13 +176,13 @@ expect eof
 
 	else
 		apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-		add-apt-repository 'deb [arch=amd64,arm64,ppc64el] http://archive.mariadb.org/mariadb-10.3.14/repo/ubuntu/ bionic main'
+		add-apt-repository "deb [arch=amd64,arm64,ppc64el] http://archive.mariadb.org/mariadb/repo/10.5/ubuntu $os_code main"
 		apt -y update
 
 		#DEBIAN_FRONTEND=noninteractive apt install -y mariadb-server mariadb-client
 		export DEBIAN_FRONTEND=noninteractive
-		debconf-set-selections <<< "mariadb-server-10.3 mysql-server/root_password password $db_password"
-		debconf-set-selections <<< "mariadb-server-10.3 mysql-server/root_password_again password $db_password"
+		debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password password $db_password"
+		debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password_again password $db_password"
 		apt-get install -y mariadb-server
 
 		apt-get install -y mariadb-client
@@ -212,6 +213,8 @@ expect eof
 ")
 
 		echo "${secure_mysql}"
+
+		mysql -e "GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY '$db_password';FLUSH PRIVILEGES;"
 
 	fi
 
@@ -410,12 +413,9 @@ fi
 echo -e "\n---------------------------------------------------------------------------------------"
 echo "Certbot"
 if [ $redis == 'y' ]; then
-	apt-get install -y software-properties-common
-	add-apt-repository -y universe
-	add-apt-repository -y ppa:certbot/certbot
-	apt-get -y update
-
-	apt-get install -y python-certbot-nginx
+	snap install core; snap refresh core
+	snap install --classic certbot
+	ln -s /snap/bin/certbot /usr/bin/certbot
 fi
 
 
