@@ -30,7 +30,7 @@ fi
 
 
 ubuntu_user='ubuntu'
-phpversion='7.4'
+phpversion='8.0'
 database='mariadb'
 db_password='1q2w3e4r5t@X'
 phpmyadmin='y'
@@ -50,7 +50,7 @@ if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	ubuntu_user=$response
 fi
 
-read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2, 7.3, 7.4] [default: $phpversion]" response
+read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] [default: $phpversion]" response
 response=${response,,}
 if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	phpversion=$response
@@ -252,13 +252,18 @@ else
     	      apt-get -y install php7.1 php7.1-mysql php7.1-fpm php7.1-mbstring php7.1-xml php7.1-curl php7.1-zip php7.1-gd php7.1-gmp php7.1-intl php7.1-bcmath php7.1-mcrypt
     	      update-alternatives --set php /usr/bin/php7.1
         else
-        	if [ $phpversion = "7.4" ]; then
+            if [ $phpversion = "7.4" ]; then
     	        apt-get -y install nginx php7.4 php7.4-mysql php7.4-fpm php7.4-mbstring php7.4-xml php7.4-curl php7.4-zip php7.4-gd  php7.4-bcmath php7.4-intl php7.4-cli php7.4-xmlrpc  php7.4-imagick php7.4-common php7.4-dev php7.4-imap php7.4-opcache php7.4-soap  unzip php7.4-gmp
     	      	update-alternatives --set php /usr/bin/php7.4
-	        else
+	    else
+		if [ $phpversion = "8.0" ]; then
+    	            apt-get -y install nginx php8.0 php8.0-mysql php8.0-fpm php8.0-mbstring php8.0-xml php8.0-curl php8.0-zip php8.0-gd  php8.0-bcmath php8.0-intl php8.0-cli php8.0-xmlrpc  php8.0-imagick php8.0-common php8.0-dev php8.0-imap php8.0-opcache php8.0-soap  unzip php8.0-gmp
+    	      	    update-alternatives --set php /usr/bin/php8.0
+	        else    
 	            apt-get -y install nginx php7.0 php7.0-mysql php7.0-fpm php7.0-mbstring php7.0-xml php7.0-curl php7.0-mcrypt php7.0-zip php7.0-gd php7.0-bcmath php7.0-gmp
 	            update-alternatives --set php /usr/bin/php7.0
-	        fi
+		fi
+	    fi
         fi
     fi
 fi
