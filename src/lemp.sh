@@ -31,6 +31,7 @@ fi
 
 ubuntu_user='ubuntu'
 phpversion='8.0'
+nodeversion='14'
 database='mariadb'
 db_password='1q2w3e4r5t@X'
 phpmyadmin='y'
@@ -114,6 +115,12 @@ if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	supervisor=$response
 fi
 
+read -r -p "Which nodejs do you want to install? [14, 16, no] [default: $nodeversion]: " response
+response=${response,,}
+if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
+	nodeversion=$response
+fi
+
 echo -e "\n---------------------------------------------------------------------------------------"
 echo "UPDATE & UPGRADE"
 
@@ -175,14 +182,6 @@ expect eof
 
 
 	else
-		apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xF1656F24C74CD1D8
-		add-apt-repository "deb [arch=amd64,arm64,ppc64el] http://archive.mariadb.org/mariadb/repo/10.5/ubuntu $os_code main"
-		apt -y update
-
-		#DEBIAN_FRONTEND=noninteractive apt install -y mariadb-server mariadb-client
-		export DEBIAN_FRONTEND=noninteractive
-		debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password password $db_password"
-		debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password_again password $db_password"
 		apt-get install -y mariadb-server
 
 		apt-get install -y mariadb-client
@@ -430,3 +429,24 @@ echo "Supervisor"
 if [ $supervisor == 'y' ]; then
 	apt-get install -y supervisor
 fi
+
+
+echo -e "\n---------------------------------------------------------------------------------------"
+echo "NodeJS"
+if [ $nodeversion == '14' ]; then
+	curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
+	apt-get install -y nodejs
+	curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+	echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+	apt-get update && apt-get install yarn
+	
+fi
+
+if [ $nodeversion == '16' ]; then
+	curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
+	apt-get install -y nodejs
+	curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | sudo tee /usr/share/keyrings/yarnkey.gpg >/dev/null
+	echo "deb [signed-by=/usr/share/keyrings/yarnkey.gpg] https://dl.yarnpkg.com/debian stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+	apt-get update && apt-get install yarn
+fi
+
