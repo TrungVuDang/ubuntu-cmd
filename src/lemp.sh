@@ -51,7 +51,7 @@ if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	ubuntu_user=$response
 fi
 
-read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] [default: $phpversion]" response
+read -r -p "Which PHP version do you want to install? [7.0, 7.1, 7.2, 7.3, 7.4, 8.0] [default: $phpversion] " response
 response=${response,,}
 if [ "$response" != "" ] && [ ${#response} -ne 0 ]; then
 	phpversion=$response
